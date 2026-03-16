@@ -96,22 +96,22 @@ stages:
                 rm -rf .github
 
           # Uncompress SQL on VM
-          - task: SSH@0
-            displayName: "Uncompress odoo.sql.gz on VM"
-            inputs:
-              sshEndpoint: 'ssh-odoo17-prod'
-              runOptions: commands
-              commands: |
-                set -e
-                cd $(stagePath)/deploy-temp
-               
-                if [ -f "odoo.sql.gz" ] 
-                then
-                  echo "Uncompressing backup..."
-                  gzip -dk odoo.sql.gz
-                else
-                  echo "No gzip file found, skipping..."
-                fi
+          # - task: SSH@0
+          #   displayName: "Uncompress odoo.sql.gz on VM"
+          #   inputs:
+          #     sshEndpoint: 'ssh-odoo17-prod'
+          #     runOptions: commands
+          #     commands: |
+          #       set -e
+          #       cd $(stagePath)/deploy-temp
+                
+          #       if [ -f "odoo.sql.gz" ] 
+          #       then
+          #         echo "Uncompressing backup..."
+          #         gzip -dk odoo.sql.gz
+          #       else
+          #         echo "No gzip file found, skipping..."
+          #       fi
       
           # Restore Database
           - task: SSH@0
