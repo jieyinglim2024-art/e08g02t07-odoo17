@@ -104,6 +104,8 @@ stages:
               commands: |
                 set -e
                 cd $(stagePath)/deploy-temp
+                echo "Current files:"
+                ls -lah
                 echo "Uncompressing odoo.sql.gz..."
                 gunzip -c odoo.sql.gz > odoo.sql
                 echo "Uncompress complete"
