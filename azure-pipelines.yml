@@ -19,7 +19,7 @@ stages:
 # =========================
 - stage: Staging
   displayName: Deploy to Staging
-  condition: eq(variables['Build.SourceBranchName'], 'Staging')
+  condition: succeeded() #eq(variables['Build.SourceBranchName'], 'Staging')
 
   jobs:
   - deployment: DeployStaging
@@ -64,7 +64,9 @@ stages:
 # =========================
 - stage: Production
   displayName: Deploy to Production
-  condition: eq(variables['Build.SourceBranchName'], 'master')
+  dependsOn: Staging
+  condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'master'))
+  #condition: eq(variables['Build.SourceBranchName'], 'master')
 
   jobs:
   - deployment: DeployProduction
@@ -114,13 +116,13 @@ stages:
               runOptions: commands
               commands: |
                 set -e
-                echo "$(STAGINGUSERPASSWORD)" | sudo -S -p '' cp /home/azureuser/deploy-temp/restore_db.sh /tmp/
-                echo "$(STAGINGUSERPASSWORD)" | sudo -S -p '' cp /home/azureuser/deploy-temp/odoo.sql /tmp/
+                echo "$(PRODUSERPASSWORD)" | sudo -S -p '' cp /home/azureuser/deploy-temp/restore_db.sh /tmp/
+                echo "$(PRODUSERPASSWORD)" | sudo -S -p '' cp /home/azureuser/deploy-temp/odoo.sql /tmp/
 
-                echo "$(STAGINGUSERPASSWORD)" | sudo -S -p '' chmod +x /tmp/restore_db.sh
-                echo "$(STAGINGUSERPASSWORD)" | sudo -S -p '' chmod 644 /tmp/odoo.sql
+                echo "$(PRODUSERPASSWORD)" | sudo -S -p '' chmod +x /tmp/restore_db.sh
+                echo "$(PRODUSERPASSWORD)" | sudo -S -p '' chmod 644 /tmp/odoo.sql
 
-                echo "$(STAGINGUSERPASSWORD)" | sudo -S -p '' -u postgres /tmp/restore_db.sh "odoo17" "odoo" "/tmp/odoo.sql"
+                echo "$(PRODUSERPASSWORD)" | sudo -S -p '' -u postgres /tmp/restore_db.sh "odoo17" "odoo" "/tmp/odoo.sql"
 
           # Run update script
           - task: SSH@0
@@ -129,5 +131,5 @@ stages:
               sshEndpoint: 'ssh-odoo17-prod'
               runOptions: commands
               commands: |
-                echo "$(STAGINGUSERPASSWORD)" | sudo -S -p '' chmod +x $(updateScript)
-                echo "$(STAGINGUSERPASSWORD)" | sudo -S -p '' $(updateScript)
+                echo "$(PRODUSERPASSWORD)" | sudo -S -p '' chmod +x $(updateScript)
+                echo "$(PRODUSERPASSWORD)" | sudo -S -p '' $(updateScript)
