@@ -103,11 +103,11 @@ stages:
               runOptions: commands
               commands: |
                 set -e
-                cd $(stagePath)/deploy-temp/
+                cd $(stagePath)/deploy-temp
                 echo "Uncompressing odoo.sql.gz..."
-                gunzip -c $(tempDeploy)/odoo.sql.gz > $(tempDeploy)/odoo.sql
-                echo "Uncompress complete: $(stagePath)/deploy-temp/odoo.sql"
-
+                gunzip -c odoo.sql.gz > odoo.sql
+                echo "Uncompress complete"
+      
           # Restore Database
           - task: SSH@0
             displayName: "Restore Database"
