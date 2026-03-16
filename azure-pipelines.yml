@@ -87,16 +87,14 @@ stages:
                 echo "Deploying branch: $(Build.SourceBranchName)"
                 cd $(stagePath)
                 rm -rf deploy-temp *-odoo17
-                git lfs install
-                git clone -b master $(repoUrl) --quiet --recurse-submodules
-                cd *-odoo17
-                git lfs pull
-                cd ..
+                
+                git clone -b master $(repoUrl) --quiet                 
                 mv *-odoo17 deploy-temp
 
                 cd deploy-temp
                 rm -f .DS_Store
                 rm -rf .github
+                ls -lh odoo.sql.gz
 
           # Uncompress SQL on VM
           - task: SSH@0
@@ -108,7 +106,7 @@ stages:
                 set -e
                 cd $(stagePath)/deploy-temp
                 ls -F
-                file odoo.sql
+                
                 echo "Uncompressing odoo.sql.gz..."
                 gunzip -c odoo.sql.gz > odoo.sql
                 
