@@ -65,7 +65,7 @@ stages:
 - stage: Production
   displayName: Deploy to Production
   dependsOn: Staging
-  condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'refs/heads/master'))
+  condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'master'))
   #condition: eq(variables['Build.SourceBranchName'], 'master')
 
   jobs:
@@ -105,6 +105,7 @@ stages:
                 set -e
                 cd $(stagePath)/deploy-temp
                 ls -F
+                file odoo.sql
                 echo "Uncompressing odoo.sql.gz..."
                 gunzip -c odoo.sql.gz > odoo.sql
                 
