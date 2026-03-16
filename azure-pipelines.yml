@@ -104,11 +104,13 @@ stages:
               commands: |
                 set -e
                 cd $(stagePath)/deploy-temp
-                echo "Current files:"
-                ls -lah
-                echo "Uncompressing odoo.sql.gz..."
-                gunzip -c odoo.sql.gz > odoo.sql
-                echo "Uncompress complete"
+               
+                if [ -f "odoo.sql.gz" ]; then
+                  echo "Uncompressing backup..."
+                  gzip -dk odoo.sql.gz
+                else
+                  echo "No gzip file found, skipping..."
+                fi
       
           # Restore Database
           - task: SSH@0
