@@ -19,7 +19,7 @@ stages:
 # =========================
 - stage: Staging
   displayName: Deploy to Staging
-  condition: eq(variables['Build.SourceBranchName'], 'Staging')
+  condition: succeeded() #eq(variables['Build.SourceBranchName'], 'Staging')
 
   jobs:
   - deployment: DeployStaging
@@ -64,7 +64,9 @@ stages:
 # =========================
 - stage: Production
   displayName: Deploy to Production
-  condition: eq(variables['Build.SourceBranchName'], 'master')
+  dependsOn: Staging
+  condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'master'))
+  #condition: eq(variables['Build.SourceBranchName'], 'master')
 
   jobs:
   - deployment: DeployProduction
