@@ -84,27 +84,21 @@ stages:
               runOptions: commands
               commands: |
                 set -e
-                # 1. Start completely fresh
-                cd $(stagePath)
-                rm -rf deploy-temp
+                echo "Cleaning old deployment..."
+                rm -rf $(stagePath)/deploy-temp
                 
-                # 2. Clone directly into deploy-temp
-                git clone -b master $(repoUrl) deploy-temp --quiet --depth 1
-                cd deploy-temp
+                echo "Cloning branch: master..."
+                # Clone directly into deploy-temp to avoid 'mv' errors
+                git clone -b master $(repoUrl) $(stagePath)/deploy-temp --quiet --depth 1
 
-                # 3. Check for the .gz file specifically
-                if [ -f "odoo.sql.gz" ]; then
-                    echo "Found odoo.sql.gz (Size: $(ls -lh odoo.sql.gz | awk '{print $5}'))"
-                    
-                    # Decompress and overwrite any existing 0-byte odoo.sql
-                    gunzip -c odoo.sql.gz > odoo.sql
-                    
-                    echo "Success: Uncompressed to odoo.sql ($(ls -lh odoo.sql | awk '{print $5}'))"
-                else
-                    echo "ERROR: odoo.sql.gz NOT FOUND in repository root!"
-                    ls -F
-                    exit 1
-                fi
+                cd $(stagePath)/deploy-temp
+                
+                echo "Cleaning metadata..."
+                rm -f .DS_Store
+                rm -rf .github
+
+                echo "Verifying downloaded file..."
+                ls -lh odoo.sql.gz
 
           # Uncompress SQL on VM
           - task: SSH@0
