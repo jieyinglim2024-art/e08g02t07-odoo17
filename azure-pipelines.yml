@@ -88,13 +88,13 @@ stages:
                 cd $(stagePath)
                 rm -rf deploy-temp *-odoo17
                 
-                git clone -b master $(repoUrl) --quiet                 
-                mv *-odoo17 deploy-temp
+                git clone -b master $(repoUrl) deploy-temp --quiet --depth 1                 
+               
 
                 cd deploy-temp
-                rm -f .DS_Store
-                rm -rf .github
-                ls 
+               
+                ls -lh odoo.sql*
+                file odoo.sql*
 
           # Uncompress SQL on VM
           - task: SSH@0
