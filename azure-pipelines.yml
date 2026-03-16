@@ -93,9 +93,7 @@ stages:
 
                 cd $(stagePath)/deploy-temp
                 
-                echo "Cleaning metadata..."
-                rm -f .DS_Store
-                rm -rf .github
+                git checkout odoo.sql.gz
 
                 echo "Verifying downloaded file..."
                 ls -lh odoo.sql.gz
