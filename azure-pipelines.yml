@@ -40,7 +40,7 @@ stages:
                 echo "Deploying branch: $(Build.SourceBranchName)"
                 cd $(stagePath)
                 rm -rf deploy-temp *-odoo17
-                
+
                 git clone -b Staging $(repoUrl) --quiet
                 mv *-odoo17 deploy-temp
 
@@ -84,19 +84,16 @@ stages:
               runOptions: commands
               commands: |
                 set -e
-                echo "Cleaning old deployment..."
-                rm -rf $(stagePath)/deploy-temp
-                
-                echo "Cloning branch: master..."
-                # Clone directly into deploy-temp to avoid 'mv' errors
-                git clone -b master $(repoUrl) $(stagePath)/deploy-temp --quiet --depth 1
+                echo "Deploying branch: $(Build.SourceBranchName)"
+                cd $(stagePath)
+                rm -rf deploy-temp *-odoo17
 
-                cd $(stagePath)/deploy-temp
-                
-                git checkout odoo.sql.gz
+                git clone -b master $(repoUrl) --quiet
+                mv *-odoo17 deploy-temp
 
-                echo "Verifying downloaded file..."
-                ls -lh odoo.sql.gz
+                cd deploy-temp
+                rm -f .DS_Store
+                rm -rf .github
 
           # Uncompress SQL on VM
           - task: SSH@0
@@ -107,13 +104,10 @@ stages:
               commands: |
                 set -e
                 cd $(stagePath)/deploy-temp
-                ls -F
-                
                 echo "Uncompressing odoo.sql.gz..."
                 gunzip -c odoo.sql.gz > odoo.sql
-                
                 echo "Uncompress complete"
-          
+      
           # Restore Database
           - task: SSH@0
             displayName: "Restore Database"
